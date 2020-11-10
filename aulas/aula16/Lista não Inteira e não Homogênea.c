@@ -84,43 +84,31 @@ void insertElement(HETEROGENEOUS_LIST *list, int position, int type, union value
         printf("\nUnfortunately, there is not store enough in list\n\n");
         exit(3);
     }
-
-    if(type == INTGR) {
-        alocado->VALUE.intValue = value.intValue;
-        alocado->type = 1;
-    } else if(type == FLT) {
-        alocado->VALUE.floatValue = value.floatValue;
-        alocado->type = 2;
-    } else if(type == STRING) {
-        strcpy(alocado->VALUE.stringValue, value.stringValue);
-        alocado->type = 3;
-    } else {
+    if(type > STRING || type < INTGR) {
         printf("Error! Type not recognized\n");
         exit(4);
     }
+    alocado->type = type;
+    alocado->VALUE = value;
+    
     if((*list) == NULL) {
         alocado->next = alocado;
         alocado->previous = alocado;
         (*list) = alocado;
 
-    } else if (position == (length + 1)) {
-        alocado->next = (*list)->next;
-        alocado->previous = (*list);
-
-        (*list)->next = alocado;
-        (alocado->next)->previous = alocado;
-
-        (*list) = (*list)->next;
     } else {
-        int i;
-        for(i=1, aux = (*list); i<position; i++) {
-            aux = aux->next;
+        int p = position;
+        if(position <= length / 2) {
+            for(aux = (*list); position > 1; aux = aux->next, position--);
+        } else {
+            for(aux = (*list); position <= length; aux = aux->previous, position++);
         }
-        alocado->next = aux->next;
         alocado->previous = aux;
-
+        alocado->next = aux->next;
         aux->next = alocado;
-        (alocado->next)->previous = alocado;
+        if(p == length + 1) {
+            *list = alocado;
+        }
     }
 }
 
